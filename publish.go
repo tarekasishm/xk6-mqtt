@@ -38,6 +38,38 @@ func (*Mqtt) Publish(
 		common.Throw(common.GetRuntime(ctx), ErrorPublish)
 		return
 	}
+}
 
-	return
+// PublishBytes allow to publish one message in bytes format
+func (*Mqtt) PublishBytes(
+	ctx context.Context,
+	client paho.Client,
+	topic string,
+	qos int,
+	message interface{},
+	retain bool,
+	timeout int,
+) {
+	//log.Printf("publish %T %#v %v", message, message)
+
+	state := lib.GetState(ctx)
+	if state == nil {
+		common.Throw(common.GetRuntime(ctx), ErrorState)
+		return
+	}
+	if client == nil {
+		common.Throw(common.GetRuntime(ctx), ErrorClient)
+		return
+	}
+
+	token := client.Publish(topic, byte(qos), retain, message)
+	if !token.WaitTimeout(time.Duration(timeout) * time.Millisecond) {
+		common.Throw(common.GetRuntime(ctx), ErrorTimeout)
+		return
+	}
+	if err := token.Error(); err != nil {
+		//log.Println("error publish go", err)
+		common.Throw(common.GetRuntime(ctx), ErrorPublish)
+		return
+	}
 }

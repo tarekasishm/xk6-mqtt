@@ -83,21 +83,21 @@ export default function () {
         sub_client = vus_connections[k6SubId];
     } else {
         try {
-        sub_client = connect(
-            // The list of URL of  MQTT server to connect to
-            [host + ":" + port],
-            // A username to authenticate to the MQTT server
-            "",
-            // Password to match username
-            "",
-            // clean session setting
-            false,
-            // Client id for reader
-            k6SubId,
-            // timeout in ms
-            timeout,
-        )
-        vus_connections[k6SubId] = sub_client;
+            sub_client = connect(
+                // The list of URL of  MQTT server to connect to
+                [host + ":" + port],
+                // A username to authenticate to the MQTT server
+                "",
+                // Password to match username
+                "",
+                // clean session setting
+                false,
+                // Client id for reader
+                k6SubId,
+                // timeout in ms
+                timeout,
+            )
+            vus_connections[k6SubId] = sub_client;
         } catch (error) {
             err_sub_client = error;
         }
@@ -168,7 +168,6 @@ export default function () {
     check(err_consume, {
         "is received": err => err == undefined
     });
-
     check(message, {
         "is content correct": msg => msg == k6Message
     });

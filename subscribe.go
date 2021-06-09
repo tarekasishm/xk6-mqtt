@@ -31,10 +31,10 @@ func (*Mqtt) Subscribe(
 		common.Throw(common.GetRuntime(ctx), ErrorState)
 		return nil
 	}
-	recieved := make(chan paho.Message)
+	received := make(chan paho.Message)
 	messageCB := func(client paho.Client, msg paho.Message) {
 		go func(msg paho.Message) {
-			recieved <- msg
+			received <- msg
 		}(msg)
 	}
 	if client == nil {
@@ -51,7 +51,7 @@ func (*Mqtt) Subscribe(
 		common.Throw(common.GetRuntime(ctx), ErrorTimeout)
 		return nil
 	}
-	return recieved
+	return received
 }
 
 // Consume will wait for one message to arrive
@@ -77,5 +77,32 @@ func (*Mqtt) Consume(
 	case <-time.After(time.Millisecond * time.Duration(timeout)):
 		common.Throw(common.GetRuntime(ctx), ErrorTimeout)
 		return ""
+	}
+}
+
+// ConsumeBytes will wait for one message to arrive in binary format
+func (*Mqtt) ConsumeBytes(
+	ctx context.Context,
+	token chan paho.Message,
+	// timeout ms
+	timeout uint,
+) []byte {
+	state := lib.GetState(ctx)
+	if state == nil {
+		common.Throw(common.GetRuntime(ctx), ErrorState)
+		return nil
+	}
+	if token == nil {
+		common.Throw(common.GetRuntime(ctx), ErrorConsumeToken)
+		return nil
+	}
+
+	select {
+	case msg := <-token:
+		//log.Println("consume", string(msg.Payload()))
+		return msg.Payload()
+	case <-time.After(time.Millisecond * time.Duration(timeout)):
+		common.Throw(common.GetRuntime(ctx), ErrorTimeout)
+		return nil
 	}
 }
