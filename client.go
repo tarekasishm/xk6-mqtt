@@ -10,6 +10,7 @@ import (
 	paho "github.com/eclipse/paho.mqtt.golang"
 	"go.k6.io/k6/js/common"
 	"go.k6.io/k6/lib"
+	"fmt"
 )
 
 // Mqtt is the objet to be used in tests
@@ -36,6 +37,14 @@ func (*Mqtt) Connect(
 
 ) paho.Client {
 	state := lib.GetState(ctx)
+	fmt.Printf("broker -> %s\n", servers[0])
+	fmt.Printf("user -> %s\n", user)
+	fmt.Printf("password-> %s\n", password)
+	fmt.Printf("clean session -> %t\n", cleansess)
+	fmt.Printf("clientid -> %s\n", clientid)
+	fmt.Printf("timeout -> %d\n", timeot)
+	fmt.Printf("certPath -> %s\n", certPath)
+	
 	if state == nil {
 		common.Throw(common.GetRuntime(ctx), ErrorState)
 		return nil
