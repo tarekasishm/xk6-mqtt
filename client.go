@@ -42,7 +42,7 @@ func (*Mqtt) Connect(
 	fmt.Printf("password-> %s\n", password)
 	fmt.Printf("clean session -> %t\n", cleansess)
 	fmt.Printf("clientid -> %s\n", clientid)
-	fmt.Printf("timeout -> %d\n", timeot)
+	fmt.Printf("timeout -> %d\n", timeout)
 	fmt.Printf("certPath -> %s\n", certPath)
 	
 	if state == nil {
